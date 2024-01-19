@@ -1,6 +1,6 @@
 # c2t_megg
 
-Various interfaces for mimic eggs from the chest mimic. It will maintain a list of eggs that are already maximally donated in order to not waste effort. It does this through updating a data file any time any of the functions sees the list of eggs that can be extracted, or if the user manually visits the page through the relay browser.
+Kolmafia script written in ASH to add various interfaces for mimic eggs from the chest mimic. It will maintain a list of eggs that are already maximally donated in order to not waste effort. It does this through updating a data file any time any of the functions sees the list of eggs that can be extracted, or if the user manually visits the page through the relay browser.
 
 ## Installation
 
