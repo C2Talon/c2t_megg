@@ -90,7 +90,7 @@ void main(string args) {
 		default:
 			c2t_megg_print(`"{action}" is an invalid action`);
 		case "help":
-			print("c2t_megg <donate|extract|fight|preadv|help> <monster>");
+			print("c2t_megg <donate|extract|fight|preadv|update> <monster>");
 			break;
 		case "donate":
 		case "donegg":
@@ -138,11 +138,11 @@ boolean c2t_megg_donate(monster target) {
 	if (!have_familiar(mimic))
 		return c2t_megg_error("no chest mimic detected");
 	if (get_property(pref).to_int() >= 3)
-		return c2t_megg_success("max eggs donated already");
+		return c2t_megg_success("max daily eggs donated already");
 	if (item_amount(egg) == 0)
 		return c2t_megg_success("no eggs on hand to donate");
 	if (maxlist contains monstring)
-		return c2t_megg_success(`{target} already max donated`);
+		return c2t_megg_success(`{target} eggs already max donated`);
 
 	//go
 	use_familiar(mimic);
@@ -183,7 +183,7 @@ boolean c2t_megg_donate(monster target) {
 		repeat {
 			if (!page.contains_text(`<option value="{monstring}">`))//precarious match
 				return c2t_megg_success(`no more {target} eggs left to donate`);
-			c2t_megg_print(`donating egg of {target.manuel_name}`);
+			c2t_megg_print(`donating egg of {target}`);
 			page = visit_url(`choice.php?pwd&whichchoice=1517&option=1&mid={monstring}`,true,true);
 		} until (item_amount(egg) == 0
 			|| get_property(pref).to_int() >= 3
@@ -196,7 +196,7 @@ boolean c2t_megg_donate(monster target) {
 		repeat {
 			monstring = options[needle];
 			if (!(maxlist contains monstring)) {
-				c2t_megg_print(`donating egg of {monstring.to_monster().manuel_name}`);
+				c2t_megg_print(`donating egg of {monstring.to_monster()}`);
 				page = visit_url(`choice.php?pwd&whichchoice=1517&option=1&mid={monstring}`,true,true);
 				break;
 			}
@@ -212,7 +212,7 @@ boolean c2t_megg_donate(monster target) {
 
 	//result
 	if (get_property(pref).to_int() >= 3)
-		return c2t_megg_success("max eggs donated");
+		return c2t_megg_success("max daily eggs donated");
 	if (item_amount(egg) == 0)
 		return c2t_megg_success("ran out of eggs to donate");
 	if (tries >= MAX_TRIES)
@@ -240,7 +240,7 @@ boolean c2t_megg_extract(monster target) {
 	if (target == $monster[none])
 		return c2t_megg_error("cannot extract none");
 	if (get_property(pref).to_int() >= 11)
-		return c2t_megg_success("already at max extractions");
+		return c2t_megg_success("already at max daily extractions");
 	if (mimic.experience == 0) {
 		c2t_megg_print("chest mimic detected with no experience; refreshing terrarium");
 		cli_execute("refresh terrarium");
@@ -325,11 +325,14 @@ boolean c2t_megg_preAdv() {
 	int last = get_property(prefLast).to_int();
 	int limit = get_property(prefLimit).to_int() * 60000;
 	int now = now_to_int();
+	boolean dailyMaxed = get_property("_mimicEggsObtained").to_int() >= 11;
 
 	//maybe don't need to go
 	if (!have_familiar(mimic))
 		return false;
 	if (mimic.experience < 100)
+		return false;
+	if (dailyMaxed)
 		return false;
 	//30 minutes speed limit to start
 	if (limit == 0) {
@@ -373,15 +376,19 @@ boolean c2t_megg_update() {
 	familiar mimic = $familiar[chest mimic];
 	boolean[string] maxlist;
 	buffer page;
+	boolean dailyMaxed = get_property("_mimicEggsObtained").to_int() >= 11;
+
+	c2t_megg_init();
 
 	//maybe don't need to go
 	if (!have_familiar(mimic))
 		return c2t_megg_error("no chest mimic detected");
 	if (mimic.experience < 100)
 		return c2t_megg_error("not enough familiar experience");
+	if (dailyMaxed)
+		return c2t_megg_error("daily max eggs obtained; can't update list anymore today");
 
 	//go
-	c2t_megg_init();
 	use_familiar(mimic);
 	page = visit_url("place.php?whichplace=town_right&action=townright_dna",false,true);
 
