@@ -436,21 +436,31 @@ boolean c2t_megg_update() {
 
 string c2t_megg_relay(string page) {
 	buffer buf = page.to_buffer();
-	if (buf.c2t_megg_isExtractPage())
-		buf.c2t_megg_readPage().c2t_megg_writeFile();
+	boolean[string] maxlist;
+
+	if (buf.c2t_megg_isExtractPage()) {
+		maxlist = buf.c2t_megg_readPage();
+		maxlist.c2t_megg_writeFile();
+	}
 	if (get_property("c2t_megg_disableRelayCleaner").to_boolean())
 		return page;
+
 	matcher m;
 	//remove non-selectable options
 	//m = create_matcher("\\s*<option[^>]+disabled>.*?</option>",page);
 	//page = replace_all(m,"");
 	//remove articles from the start of monster names
-	m = create_matcher("(<option[^>]+>)(a|A|an|An|the|The)\\s+",page);
-	page = replace_all(m,"$1");
+	m = create_matcher("(<option[^>]+>)(a|A|an|An|the|The)\\s+",buf);
+	buf = replace_all(m,"$1").to_buffer();
+	//disable maxed eggs in donate section
+	m = create_matcher('(<option value="(\\d+)")(>.*?)\\s*</option>',buf);
+	while (m.find())
+		if (maxlist contains m.group(2))
+			buf.replace_string(`{m.group(1)}{m.group(3)}`,`{m.group(1)} disabled{m.group(3)} (max)`);
 	//make select searchable
-	page = replace_string(page,"</head>",'<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script><link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /><script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script><script type="text/javascript">var jQuery_3_7_1 = $.noConflict(true);jQuery_3_7_1(document).ready(function() {jQuery_3_7_1(\'.searchable-select\').select2();});</script></head>').to_string();
-	page = replace_string(page,'<select name="mid">','<select class="searchable-select" name="mid">').to_string();
-	return page;
+	buf.replace_string("</head>",'<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script><link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /><script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script><script type="text/javascript">var jQuery_3_7_1 = $.noConflict(true);jQuery_3_7_1(document).ready(function() {jQuery_3_7_1(\'.searchable-select\').select2();});</script></head>');
+	buf.replace_string('<select name="mid">','<select class="searchable-select" name="mid">');
+	return buf.to_string();
 }
 
 boolean c2t_megg_error(string s) {
