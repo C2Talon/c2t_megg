@@ -391,7 +391,6 @@ boolean c2t_megg_preAdv() {
 		return c2t_megg_error("could not read extract interfact to record maxed eggs");
 
 	//update last check
-	set_property(prefLast,now);
 	return c2t_megg_success(`pre-adventure success`);
 }
 
@@ -452,7 +451,7 @@ string c2t_megg_relay(string page) {
 	matcher m;
 
 	//remove articles from the start of monster names
-	m = create_matcher("(<option[^>]+>)(a|A|an|An|the|The)\\s+",buf);
+	m = create_matcher("(<option[^>]+>)([Aa]n?|[Tt]he)\\s+",buf);
 	buf = replace_all(m,"$1").to_buffer();
 
 	//disable maxed eggs in donate section
@@ -531,14 +530,17 @@ boolean[string] c2t_megg_readFile() {
 boolean c2t_megg_writeFile(boolean[string] list) {
 	buffer buf;
 	boolean[int] neat;
-	string pref = "_c2t_megg_maxlistCount";
+	string prefCount = "_c2t_megg_maxlistCount";
+	string prefLast = "_c2t_megg_lastCheck";
 	int size = list.count();
 
 	if (size == 0)
 		return false;
 	//only write if the list is actually bigger or it's a new day
-	if (size <= get_property(pref).to_int())
+	if (size <= get_property(prefCount).to_int()) {
+		set_property(prefLast,now_to_int());
 		return false;
+	}
 
 	//populate int map to sort by number instead of alpha-numerically, simply for neatness sake
 	foreach x in list
@@ -547,7 +549,8 @@ boolean c2t_megg_writeFile(boolean[string] list) {
 		buf.append(`{x}\n`);
 	if (buffer_to_file(buf,"c2t_megg_maxlist.txt")) {
 		c2t_megg_print(`maxed egg list updated with {size} entries`);
-		set_property(pref,size);
+		set_property(prefLast,now_to_int());
+		set_property(prefCount,size);
 		return true;
 	}
 	else {
