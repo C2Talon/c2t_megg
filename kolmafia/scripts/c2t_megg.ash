@@ -442,24 +442,29 @@ string c2t_megg_relay(string page) {
 		maxlist = buf.c2t_megg_readPage();
 		maxlist.c2t_megg_writeFile();
 	}
+
 	if (get_property("c2t_megg_disableRelayCleaner").to_boolean())
 		return page;
 
+	if (maxlist.count() == 0)
+		maxlist = c2t_megg_readFile();
+
 	matcher m;
-	//remove non-selectable options
-	//m = create_matcher("\\s*<option[^>]+disabled>.*?</option>",page);
-	//page = replace_all(m,"");
+
 	//remove articles from the start of monster names
 	m = create_matcher("(<option[^>]+>)(a|A|an|An|the|The)\\s+",buf);
 	buf = replace_all(m,"$1").to_buffer();
+
 	//disable maxed eggs in donate section
 	m = create_matcher('(<option value="(\\d+)")(>.*?)\\s*</option>',buf);
 	while (m.find())
 		if (maxlist contains m.group(2))
 			buf.replace_string(`{m.group(1)}{m.group(3)}`,`{m.group(1)} disabled{m.group(3)} (max)`);
+
 	//make select searchable
 	buf.replace_string("</head>",'<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script><link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /><script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script><script type="text/javascript">var jQuery_3_7_1 = $.noConflict(true);jQuery_3_7_1(document).ready(function() {jQuery_3_7_1(\'.searchable-select\').select2();});</script></head>');
 	buf.replace_string('<select name="mid">','<select class="searchable-select" name="mid">');
+
 	return buf.to_string();
 }
 
