@@ -45,9 +45,9 @@ All of the above functions can also be accessed via the CLI. The list of command
 
 ### Relay override script
 
-When visiting the Mimic DNA Bank in the relay browser, the maxed egg list will be updated automatically if able. The script will also clean up the display of what monsters can be selected by removing unselectable ones and removing the articles at the beginning of monster names, as can be seen in this comparison:
+When visiting the Mimic DNA Bank in the relay browser, the maxed egg list will be updated automatically if able. The script will also clean up the the names of monsters by removing the articles at the beginning, as well as making the drop-down menus searchable as can be seen here:
 
-[relay_cleaner_comparison.png](https://github.com/C2Talon/c2t_megg/blob/master/relay_cleaner_comparison.png "relay cleaner comparison")
+[relay_cleaner_example.png](https://github.com/C2Talon/c2t_megg/blob/master/relay_cleaner_example.png "relay cleaner example")
 
 The cleaning behavior of the relay script can be enabled or disabled via the CLI:
 
