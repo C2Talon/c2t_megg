@@ -531,8 +531,13 @@ boolean[string] c2t_megg_readFile() {
 boolean c2t_megg_writeFile(boolean[string] list) {
 	buffer buf;
 	boolean[int] neat;
+	string pref = "_c2t_megg_maxlistCount";
+	int size = list.count();
 
-	if (list.count() == 0)
+	if (size == 0)
+		return false;
+	//only write if the list is actually bigger or it's a new day
+	if (size <= get_property(pref).to_int())
 		return false;
 
 	//populate int map to sort by number instead of alpha-numerically, simply for neatness sake
@@ -541,7 +546,8 @@ boolean c2t_megg_writeFile(boolean[string] list) {
 	foreach x in neat
 		buf.append(`{x}\n`);
 	if (buffer_to_file(buf,"c2t_megg_maxlist.txt")) {
-		c2t_megg_print(`maxed egg list updated with {list.count()} entries`);
+		c2t_megg_print(`maxed egg list updated with {size} entries`);
+		set_property(pref,size);
 		return true;
 	}
 	else {
