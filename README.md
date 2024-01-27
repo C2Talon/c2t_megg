@@ -40,6 +40,16 @@ When `import`ed, the following functions can be used:
 
 ### CLI
 
-All of the above functions can also be accessed via the CLI:
-* `c2t_megg <donate|extract|fight|preadv|update> [monster]`
+All of the above functions can also be accessed via the CLI. The list of commands and a short description of what each does will be displayed with the following:
+* `c2t_megg help`
+
+### Relay override script
+
+When visiting the Mimic DNA Bank in the relay browser, the maxed egg list will be updated automatically if able. The script will also clean up the display of what monsters can be selected by removing unselectable ones and removing the articles at the beginning of monster names, as can be seen in this comparison:
+
+[relay_cleaner_comparison.png](https://github.com/C2Talon/c2t_megg/blob/master/relay_cleaner_comparison.png "relay cleaner comparison")
+
+The cleaning behavior of the relay script can be enabled or disabled via the CLI:
+
+`c2t_megg cleaner <on|off>`
 

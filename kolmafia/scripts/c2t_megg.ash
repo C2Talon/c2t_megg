@@ -82,15 +82,23 @@ void main(string args) {
 	for (int i = 1;i <= split.count()-1;i++)
 		target += i == 1 ? split[i] : ` {split[i]}`;
 
-	mon = target.to_lower_case() == "random"
+	target = target.to_lower_case();
+	mon = target == "random"
 		? $monster[none]
 		: target.to_monster();
 
 	switch (action) {
 		default:
-			c2t_megg_print(`"{action}" is an invalid action`);
+			c2t_megg_print(`"{action}" is an invalid command`);
 		case "help":
-			print("c2t_megg <donate|extract|fight|preadv|update> <monster>");
+			print("available commands for c2t_megg:");
+			print("c2t_megg donate [monster] -- used to donate mimic eggs of monster, or random if monster omitted");
+			print("c2t_megg extract <monster> -- used to extract mimic egg of monster from Mimic DNA Bank");
+			print("c2t_megg fight <monster> -- enter combat with monster contained in a mimic egg");
+			print("c2t_megg preadv -- updates the maxed egg list if able, but with time restictions useful for pre-adventure scripts");
+			print("c2t_megg update -- updates the maxed egg list if able");
+			print("c2t_megg cleaner <on|off> -- turn the relay cleaner on or off; the cleaner removes display of unselectable options and the articles in monster names when visiting the Mimic DNA Bank");
+			print("c2t_megg help -- displays this list of commands");
 			break;
 		case "donate":
 		case "donegg":
@@ -112,6 +120,21 @@ void main(string args) {
 			break;
 		case "update":
 			c2t_megg_update();
+			break;
+		case "cleaner":
+			switch (target) {
+				default:
+					c2t_megg_print(`{target} is an invalid relay cleaner option`);
+					break;
+				case "on":
+					set_property("c2t_megg_disableRelayCleaner",false);
+					c2t_megg_print("relay cleaner on");
+					break;
+				case "off":
+					set_property("c2t_megg_disableRelayCleaner",true);
+					c2t_megg_print("relay cleaner off");
+					break;
+			}
 			break;
 	}
 }
@@ -415,6 +438,14 @@ string c2t_megg_relay(string page) {
 	buffer buf = page.to_buffer();
 	if (buf.c2t_megg_isExtractPage())
 		buf.c2t_megg_readPage().c2t_megg_writeFile();
+	if (get_property("c2t_megg_disableRelayCleaner").to_boolean())
+		return page;
+	//remove articles from monster names and non-selectable options
+	matcher m;
+	m = create_matcher("\\s*<option[^>]+disabled>.*?</option>",page);
+	page = replace_all(m,"");
+	m = create_matcher("(<option[^>]+>)(a|A|an|An|the|The)\\s+",page);
+	page = replace_all(m,"$1");
 	return page;
 }
 

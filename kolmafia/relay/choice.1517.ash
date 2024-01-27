@@ -9,7 +9,6 @@ void main(string page_text_encoded)
 	//int choice_id = choiceOverrideDiscoverChoiceIDFromPageText(page_text);
 
 	//Modify page_text as you will here. replace_first(), etc.
-	c2t_megg_relay(page_text);
-	write(page_text);
+	page_text.c2t_megg_relay().write();
 }
 
