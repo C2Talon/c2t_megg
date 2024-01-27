@@ -1,6 +1,6 @@
 # c2t_megg
 
-Kolmafia script written in ASH to add various interfaces for mimic eggs from the chest mimic. It will maintain a list of eggs that are already maximally donated in order to not waste effort. It does this through updating a data file any time any of the functions sees the list of eggs that can be extracted, or if the user manually visits the page through the relay browser.
+Kolmafia script written in ASH to add various functions and commands for mimic eggs from the chest mimic. It also contains a relay override script that will modify the Mimic DNA Bank page to make the drop-down menus searchable. A list of maximally donated eggs is maintained in order to help prevent donating eggs that are no longer needed for cases when when the list is unavailable on the Mimic DNA Bank page itself.
 
 ## Installation
 
