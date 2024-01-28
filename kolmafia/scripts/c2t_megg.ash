@@ -469,10 +469,20 @@ string c2t_megg_relay(string page) {
 }
 
 string c2t_megg_relayFight(string page) {
+	if (get_property("c2t_megg_disableRelayCleaner").to_boolean())
+		return page;
+
 	buffer buf = page.to_buffer();
+	matcher m;
+
+	//remove articles from the start of monster names
+	m = create_matcher("(<option[^>]+>)([Aa]n?|[Tt]he)\\s+",buf);
+	buf = replace_all(m,"$1").to_buffer();
+
 	//make select searchable
 	buf.replace_string("</head>",'<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script><link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /><script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script><script type="text/javascript">var jQuery_3_7_1 = $.noConflict(true);jQuery_3_7_1(document).ready(function() {jQuery_3_7_1(\'.searchable-select\').select2();});</script></head>');
 	buf.replace_string('<select name="mid">','<select class="searchable-select" name="mid">');
+
 	return buf.to_string();
 }
 
