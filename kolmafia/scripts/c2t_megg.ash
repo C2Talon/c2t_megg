@@ -70,6 +70,7 @@ boolean c2t_megg_writeFile(boolean[string] map);
 boolean[monster] c2t_megg_maxed();
 
 //returns a map of the monsters inside the mimic eggs the user has, and how many of each, by parsing the description of the mimic egg
+//note: monster names that belong to more than 1 monster will fail to convert to monster type, but all failures will be summed up under $monster[none]
 int[monster] c2t_megg_eggs();
 
 //init
@@ -613,7 +614,7 @@ int[monster] c2t_megg_eggs() {
 	m = create_matcher("<i>[^\\s]*\\s+(.*?)\\s+\\((\\d+)\\)</i>",page);
 
 	while (m.find())
-		out[m.group(1).to_monster()] = m.group(2).to_int();
+		out[m.group(1).to_monster()] += m.group(2).to_int();
 
 	return out;
 }

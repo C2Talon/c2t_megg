@@ -43,6 +43,7 @@ When `import`ed, the following functions can be used:
 
 `int[monster] c2t_megg_eggs()`
 * returns a map of monsters inside the mimic eggs the user has, and how many of each, by parsing the description of the mimic egg
+* note: monster names that belong to more than 1 monster will fail to convert to `monster` type, but all failures will be summed up under `$monster[none]`
 
 ### CLI
 
