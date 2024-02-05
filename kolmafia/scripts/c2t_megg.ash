@@ -455,7 +455,7 @@ string c2t_megg_relay(string page) {
 	matcher m;
 
 	//remove articles from the start of monster names
-	m = create_matcher("(<option[^>]+>)([Aa]n?|[Tt]he)\\s+",buf);
+	m = create_matcher("(<option[^>]+>)([Aa]n?|[Tt]he|[Ss]ome)\\s+",buf);
 	buf = replace_all(m,"$1").to_buffer();
 
 	//disable maxed eggs in donate section
@@ -479,7 +479,7 @@ string c2t_megg_relayFight(string page) {
 	matcher m;
 
 	//remove articles from the start of monster names
-	m = create_matcher("(<option[^>]+>)([Aa]n?|[Tt]he)\\s+",buf);
+	m = create_matcher("(<option[^>]+>)([Aa]n?|[Tt]he|[Ss]ome)\\s+",buf);
 	buf = replace_all(m,"$1").to_buffer();
 
 	//make select searchable
