@@ -66,8 +66,11 @@ boolean[string] c2t_megg_readPage(buffer page);
 boolean[string] c2t_megg_readFile();
 boolean c2t_megg_writeFile(boolean[string] map);
 
-//map of monsters that have maxed eggs
+//returns a map of monsters that are maximally donated, as read from the data file
 boolean[monster] c2t_megg_maxed();
+
+//returns a map of the monsters inside the mimic eggs the user has, and how many of each, by parsing the description of the mimic egg
+int[monster] c2t_megg_eggs();
 
 //init
 void c2t_megg_init();
@@ -587,6 +590,30 @@ boolean[monster] c2t_megg_maxed() {
 
 	foreach x in maxlist
 		out[x.to_monster()] = true;
+
+	return out;
+}
+
+int[monster] c2t_megg_eggs() {
+	buffer page;
+	int[monster] out;
+	matcher m;
+	item egg = $item[mimic egg];
+
+	if (item_amount(egg) == 0)
+		return out;
+
+	page = visit_url(`desc_item.php?whichitem={egg.descid}`,false,true);
+
+	if (!page.contains_text("<!-- itemid: 11542 -->")) {
+		c2t_megg_print("couldn't read mimic egg description to parse");
+		return out;
+	}
+
+	m = create_matcher("<i>[^\\s]*\\s+(.*?)\\s+\\((\\d+)\\)</i>",page);
+
+	while (m.find())
+		out[m.group(1).to_monster()] = m.group(2).to_int();
 
 	return out;
 }

@@ -38,6 +38,12 @@ When `import`ed, the following functions can be used:
 * tries to update the max egg list if able, without the time restrictions of the pre-adventure function
 * returns `true` only if the max egg data file is updated
 
+`boolean[monster] c2t_megg_maxed()`
+* returns a map of monsters that are maximally donated, as read from the data file
+
+`int[monster] c2t_megg_eggs()`
+* returns a map of monsters inside the mimic eggs the user has, and how many of each, by parsing the description of the mimic egg
+
 ### CLI
 
 All of the above functions can also be accessed via the CLI. The list of commands and a short description of what each does will be displayed with the following:
