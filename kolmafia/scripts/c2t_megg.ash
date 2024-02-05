@@ -66,6 +66,9 @@ boolean[string] c2t_megg_readPage(buffer page);
 boolean[string] c2t_megg_readFile();
 boolean c2t_megg_writeFile(boolean[string] map);
 
+//map of monsters that have maxed eggs
+boolean[monster] c2t_megg_maxed();
+
 //init
 void c2t_megg_init();
 
@@ -576,6 +579,16 @@ boolean c2t_megg_writeFile(boolean[string] list) {
 		c2t_megg_print("maxed egg list couldn't be written");
 		return false;
 	}
+}
+
+boolean[monster] c2t_megg_maxed() {
+	boolean[monster] out;
+	boolean[string] maxlist = c2t_megg_readFile();
+
+	foreach x in maxlist
+		out[x.to_monster()] = true;
+
+	return out;
 }
 
 void c2t_megg_init() {
