@@ -344,7 +344,7 @@ boolean c2t_megg_fight(monster target) {
 	}
 
 	page = visit_url(`choice.php?pwd&whichchoice=1516&option=1&mid={monstring}`,true,true);
-	return current_round() > 0;
+	return page.contains_text(`<!-- MONSTERID: {monstring} -->`);
 }
 
 boolean c2t_megg_preAdv() {
