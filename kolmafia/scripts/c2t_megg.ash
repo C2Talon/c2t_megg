@@ -54,6 +54,12 @@ string c2t_megg_relayFight(string page);
 //print
 void c2t_megg_print(string s);
 
+//prints list of mimic eggs on hand and their quanity as read from item description
+void c2t_megg_printEggs();
+
+//print list of maxed eggs as read from data file
+void c2t_megg_printMaxed();
+
 //mafia's xpath won't let me just grab from one form directly without this workaround
 boolean c2t_megg_isExtractPage(buffer page);
 boolean c2t_megg_isDonatePage(buffer page);
@@ -101,8 +107,10 @@ void main(string args) {
 		case "help":
 			print("available commands for c2t_megg:");
 			print("c2t_megg donate [monster] -- used to donate mimic eggs of monster, or random if monster omitted");
+			print("c2t_megg eggs -- prints list of eggs on hand and their quantities, as read from the item description");
 			print("c2t_megg extract <monster> -- used to extract mimic egg of monster from Mimic DNA Bank");
 			print("c2t_megg fight <monster> -- enter combat with monster contained in a mimic egg");
+			print("c2t_megg maxed -- prints list of monsters that are maxed, as read from the data file");
 			print("c2t_megg preadv -- updates the maxed egg list if able, but with time restictions useful for pre-adventure scripts");
 			print("c2t_megg update -- updates the maxed egg list if able");
 			print("c2t_megg cleaner <on|off> -- turn the relay cleaner on or off; the cleaner removes the beginning article in monster names and makes the drop-down menus searchable when visiting the Mimic DNA Bank");
@@ -112,6 +120,9 @@ void main(string args) {
 		case "donegg":
 			c2t_megg_donate(mon);
 			break;
+		case "eggs":
+			c2t_megg_printEggs();
+			break;
 		case "extract":
 		case "eggtract":
 		case "eggstract":
@@ -119,6 +130,9 @@ void main(string args) {
 			break;
 		case "fight":
 			c2t_megg_fight(mon);
+			break;
+		case "maxed":
+			c2t_megg_printMaxed();
 			break;
 		case "pre":
 		case "preadv":
@@ -515,6 +529,24 @@ boolean c2t_megg_success(string s) {
 
 void c2t_megg_print(string s) {
 	print("c2t_megg: "+s);
+}
+
+void c2t_megg_printEggs() {
+	int[monster] eggs = c2t_megg_eggs();
+
+	c2t_megg_print("list of eggs on hand:");
+	foreach i,x in eggs
+		print(`{i} => {x}`);
+	c2t_megg_print(`total: {item_amount($item[mimic egg])}`);
+}
+
+void c2t_megg_printMaxed() {
+	boolean[monster] maxlist = c2t_megg_maxed();
+
+	c2t_megg_print("list of maxed eggs:");
+	foreach x in maxlist
+		print(`{x}`);
+	c2t_megg_print(`total: {maxlist.count()}`);
 }
 
 boolean c2t_megg_isExtractPage(buffer page) {
