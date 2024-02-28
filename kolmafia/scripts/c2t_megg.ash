@@ -536,11 +536,14 @@ void c2t_megg_printEggs() {
 	int[string] order;
 
 	foreach i,x in eggs
-		order[i.to_string()] = x;
+		order[i.to_string().to_lower_case()] = x;
 
 	c2t_megg_print("list of eggs on hand:");
 	foreach i,x in order
-		print(`{i} => {x}`);
+		if (i != "none")
+			print(`{i} => {x}`);
+	if (eggs[$monster[none] ] > 0)
+		c2t_megg_print(`unknown: {eggs[$monster[none] ]}`);
 	c2t_megg_print(`total: {item_amount($item[mimic egg])}`);
 }
 
@@ -549,7 +552,7 @@ void c2t_megg_printMaxed() {
 	boolean[string] order;
 
 	foreach x in maxlist
-		order[x.to_string()] = true;
+		order[x.to_string().to_lower_case()] = true;
 
 	c2t_megg_print("list of maxed eggs:");
 	foreach x in order
