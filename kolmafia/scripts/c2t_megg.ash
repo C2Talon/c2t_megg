@@ -76,7 +76,6 @@ boolean c2t_megg_writeFile(boolean[string] map);
 boolean[monster] c2t_megg_maxed();
 
 //returns a map of the monsters inside the mimic eggs the user has, and how many of each, by parsing the description of the mimic egg
-//note: monster names that belong to more than 1 monster will fail to convert to monster type, but all failures will be summed up under $monster[none]
 int[monster] c2t_megg_eggs();
 
 //init
@@ -113,7 +112,7 @@ void main(string args) {
 			print("c2t_megg maxed -- prints list of monsters that are maxed, as read from the data file");
 			print("c2t_megg preadv -- updates the maxed egg list if able, but with time restictions useful for pre-adventure scripts");
 			print("c2t_megg update -- updates the maxed egg list if able");
-			print("c2t_megg cleaner <on|off> -- turn the relay cleaner on or off; the cleaner removes the beginning article in monster names and makes the drop-down menus searchable when visiting the Mimic DNA Bank");
+			print("c2t_megg relay <on|off> -- turn the relay cleaner on or off; the cleaner removes the beginning article in monster names and makes the drop-down menus searchable when visiting the Mimic DNA Bank");
 			print("c2t_megg help -- displays this list of commands");
 			break;
 		case "donate":
@@ -144,6 +143,7 @@ void main(string args) {
 			c2t_megg_update();
 			break;
 		case "cleaner":
+		case "relay":
 			switch (target) {
 				default:
 					c2t_megg_print(`"{target}" is an invalid relay cleaner option`);
@@ -540,10 +540,7 @@ void c2t_megg_printEggs() {
 
 	c2t_megg_print("list of eggs on hand:");
 	foreach i,x in order
-		if (i != "none")
-			print(`{i} => {x}`);
-	if (eggs[$monster[none] ] > 0)
-		c2t_megg_print(`unknown: {eggs[$monster[none] ]}`);
+		print(`{i} => {x}`);
 	c2t_megg_print(`total: {item_amount($item[mimic egg])}`);
 }
 
@@ -654,10 +651,10 @@ int[monster] c2t_megg_eggs() {
 		return out;
 	}
 
-	m = create_matcher("<i>[^\\s]*\\s+(.*?)\\s+\\((\\d+)\\)</i>",page);
+	m = create_matcher("<!--\\s+monsterid:(\\d+)\\s+-->\\s*\\(([\\d,]+)\\)</i>",page);
 
 	while (m.find())
-		out[m.group(1).to_monster()] += m.group(2).to_int();
+		out[m.group(1).to_monster()] = m.group(2).to_int();
 
 	return out;
 }

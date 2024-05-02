@@ -43,20 +43,19 @@ When `import`ed, the following functions can be used:
 
 `int[monster] c2t_megg_eggs()`
 * returns a map of monsters inside the mimic eggs the user has, and how many of each, by parsing the description of the mimic egg
-* note: monster names that belong to more than 1 monster will fail to convert to `monster` type, but all failures will be summed up under `$monster[none]`
 
 ### CLI
 
 All of the above functions can also be accessed via the CLI. The list of commands and a short description of what each does will be displayed with the following:
 * `c2t_megg help`
 
-### Relay override script
+### Relay override scripts
 
-When visiting the Mimic DNA Bank in the relay browser, the maxed egg list will be updated automatically if able. The script will also clean up the the names of monsters by removing the articles at the beginning, as well as making the drop-down menus searchable as can be seen here:
+When visiting the Mimic DNA Bank in the relay browser, the maxed egg list will be updated automatically if able. The script will also clean up names of monsters by removing the articles from the beginning of the names, disable the ability to donate eggs that are already maximally donated, and make the drop-down menus searchable on both the "Mimic DNA Bank" and "Differentiate this Egg" pages. Examples can be seen here:
 
 ![relay_cleaner_donate.png](https://github.com/C2Talon/c2t_megg/blob/master/relay_cleaner_donate.png "relay cleaner donate example")![relay_cleaner_extract.png](https://github.com/C2Talon/c2t_megg/blob/master/relay_cleaner_extract.png "relay cleaner extract example")
 
 The cleaning behavior of the relay script can be enabled or disabled via the CLI:
 
-`c2t_megg cleaner <on|off>`
+`c2t_megg relay <on|off>`
 
