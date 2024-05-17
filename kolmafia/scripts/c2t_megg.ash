@@ -83,14 +83,16 @@ void c2t_megg_init();
 
 
 //CLI
-void main(string args) {
+void main(string... args) {
 	c2t_megg_CLI = true;
 	string[int] split;
 	string action,target;
 	monster mon;
 
-	split = split_string(args," ");
-	action = split[0].to_lower_case();
+	if (args.count() == 1) {
+		split = split_string(args[0]," ");
+		action = split[0].to_lower_case();
+	}
 
 	for (int i = 1;i <= split.count()-1;i++)
 		target += i == 1 ? split[i] : ` {split[i]}`;
@@ -103,6 +105,7 @@ void main(string args) {
 	switch (action) {
 		default:
 			c2t_megg_print(`"{action}" is an invalid command`);
+		case "":
 		case "help":
 			print("available commands for c2t_megg:");
 			print("c2t_megg donate [monster] -- used to donate mimic eggs of monster, or random if monster omitted");
