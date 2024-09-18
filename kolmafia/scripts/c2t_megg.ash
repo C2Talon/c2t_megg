@@ -654,12 +654,6 @@ int[monster] c2t_megg_eggs() {
 		visit_url(`desc_item.php?whichitem={egg.descid}`,false,true);
 	}
 
-	if (!get_property(prop).contains_text(",")) {
-		split = get_property(prop).split_string(":");
-		out[split[0].to_monster()] = split[1].to_int();
-		return out;
-	}
-
 	foreach i,x in split_string(get_property(prop),",") {
 		split = x.split_string(":");
 		out[split[0].to_monster()] = split[1].to_int();
