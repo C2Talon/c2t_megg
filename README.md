@@ -42,7 +42,7 @@ When `import`ed, the following functions can be used:
 * returns a map of monsters that are maximally donated, as read from the data file
 
 `int[monster] c2t_megg_eggs()`
-* returns a map of monsters inside the mimic eggs the user has, and how many of each, by parsing the description of the mimic egg
+* returns a map of monsters inside the mimic eggs the user has, and how many of each, by parsing the mafia preference containing mimic egg contents
 
 ### CLI
 

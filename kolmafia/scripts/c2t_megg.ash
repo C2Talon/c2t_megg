@@ -3,7 +3,7 @@
 
 //mimic egg interfaces
 
-since r27795;//egg preferences
+since r28054;//preference containing mimic egg contents
 
 //cli flag
 boolean c2t_megg_CLI = false;
@@ -75,7 +75,7 @@ boolean c2t_megg_writeFile(boolean[string] map);
 //returns a map of monsters that are maximally donated, as read from the data file
 boolean[monster] c2t_megg_maxed();
 
-//returns a map of the monsters inside the mimic eggs the user has, and how many of each, by parsing the description of the mimic egg
+//returns a map of the monsters inside the mimic eggs the user has, and how many of each, by parsing the preference containing mimic egg contents
 int[monster] c2t_megg_eggs();
 
 //init
@@ -109,7 +109,7 @@ void main(string... args) {
 		case "help":
 			print("available commands for c2t_megg:");
 			print("c2t_megg donate [monster] -- used to donate mimic eggs of monster, or random if monster omitted");
-			print("c2t_megg eggs -- prints list of eggs on hand and their quantities, as read from the item description");
+			print("c2t_megg eggs -- prints list of eggs on hand and their quantities, as read the preference containing mimic egg contents");
 			print("c2t_megg extract <monster> -- used to extract mimic egg of monster from Mimic DNA Bank");
 			print("c2t_megg fight <monster> -- enter combat with monster contained in a mimic egg");
 			print("c2t_megg maxed -- prints list of monsters that are maxed, as read from the data file");
@@ -639,26 +639,31 @@ boolean[monster] c2t_megg_maxed() {
 }
 
 int[monster] c2t_megg_eggs() {
-	buffer page;
 	int[monster] out;
-	matcher m;
 	item egg = $item[mimic egg];
+	string prop = "mimicEggMonsters";
+	string[int] split;
 
 	if (item_amount(egg) == 0)
 		return out;
 
-	page = visit_url(`desc_item.php?whichitem={egg.descid}`,false,true);
+	if (get_property(prop) == "") {
+		cli_execute("refresh inv");
+		if (item_amount(egg) == 0)
+			return out;
+		visit_url(`desc_item.php?whichitem={egg.descid}`,false,true);
+	}
 
-	if (!page.contains_text("<!-- itemid: 11542 -->")) {
-		c2t_megg_print("couldn't read mimic egg description to parse");
+	if (!get_property(prop).contains_text(",")) {
+		split = get_property(prop).split_string(":");
+		out[split[0].to_monster()] = split[1].to_int();
 		return out;
 	}
 
-	m = create_matcher("<!--\\s+monsterid:(\\d+)\\s+-->\\s*\\(([\\d,]+)\\)</i>",page);
-
-	while (m.find())
-		out[m.group(1).to_monster()] = m.group(2).to_int();
-
+	foreach i,x in split_string(get_property(prop),",") {
+		split = x.split_string(":");
+		out[split[0].to_monster()] = split[1].to_int();
+	}
 	return out;
 }
 
