@@ -51,7 +51,7 @@ All of the above functions can also be accessed via the CLI. The list of command
 
 ### Relay override scripts
 
-When visiting the Mimic DNA Bank in the relay browser, the maxed egg list will be updated automatically if able. The script will also clean up names of monsters by removing the articles from the beginning of the names, disable the ability to donate eggs that are already maximally donated, and make the drop-down menus searchable on both the "Mimic DNA Bank" and "Differentiate this Egg" pages. Examples can be seen here:
+When visiting the Mimic DNA Bank in the relay browser, the maxed egg list will be updated automatically if able. The script will also change monster names in the drop-down menus to use mafia's name for each, disable the ability to donate eggs that are already maximally donated, and make the drop-down menus searchable on both the "Mimic DNA Bank" and "Differentiate this Egg" pages. Examples can be seen here:
 
 ![relay_cleaner_donate.png](https://github.com/C2Talon/c2t_megg/blob/master/relay_cleaner_donate.png "relay cleaner donate example")![relay_cleaner_extract.png](https://github.com/C2Talon/c2t_megg/blob/master/relay_cleaner_extract.png "relay cleaner extract example")
 

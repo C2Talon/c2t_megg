@@ -115,7 +115,7 @@ void main(string... args) {
 			print("c2t_megg maxed -- prints list of monsters that are maxed, as read from the data file");
 			print("c2t_megg preadv -- updates the maxed egg list if able, but with time restictions useful for pre-adventure scripts");
 			print("c2t_megg update -- updates the maxed egg list if able");
-			print("c2t_megg relay <on|off> -- turn the relay cleaner on or off; the cleaner removes the beginning article in monster names and makes the drop-down menus searchable when visiting the Mimic DNA Bank");
+			print("c2t_megg relay <on|off> -- turn the relay cleaner on or off; the cleaner changes monster names to use mafia's names for them and makes the drop-down menus searchable when visiting the Mimic DNA Bank");
 			print("c2t_megg help -- displays this list of commands");
 			break;
 		case "donate":
@@ -459,7 +459,7 @@ boolean c2t_megg_update() {
 }
 
 string c2t_megg_relay(string page) {
-	buffer buf = page.to_buffer();
+	buffer buf = page;
 	boolean[string] maxlist;
 
 	if (buf.c2t_megg_isExtractPage()) {
@@ -475,12 +475,13 @@ string c2t_megg_relay(string page) {
 
 	matcher m;
 
-	//remove articles from the start of monster names
-	m = create_matcher("(<option[^>]+>)([Aa]n?|[Tt]he|[Ss]ome)\\s+",buf);
-	buf = replace_all(m,"$1").to_buffer();
+	//use mafia's monster names for disambiguation
+	m = create_matcher('(<option value="(\\d+)"[^>]*>).+?(?=(\\s\\(\\d+ sam|</opt))',buf);
+	while (m.find())
+		buf.replace_string(m.group(0),`{m.group(1)}{m.group(2).to_monster().name}`);
 
 	//disable maxed eggs in donate section
-	m = create_matcher('(<option value="(\\d+)")(>.*?)\\s*</option>',buf);
+	m = create_matcher('(<option value="(\\d+)")(>[^<]+)</option>',buf);
 	while (m.find())
 		if (maxlist contains m.group(2))
 			buf.replace_string(`{m.group(1)}{m.group(3)}`,`{m.group(1)} disabled{m.group(3)} (max)`);
@@ -489,25 +490,26 @@ string c2t_megg_relay(string page) {
 	buf.replace_string("</head>",'<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script><link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /><script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script><script type="text/javascript">var jQuery_3_7_1 = $.noConflict(true);jQuery_3_7_1(document).ready(function() {jQuery_3_7_1(\'.searchable-select\').select2();});</script></head>');
 	buf.replace_string('<select name="mid">','<select class="searchable-select" name="mid">');
 
-	return buf.to_string();
+	return buf;
 }
 
 string c2t_megg_relayFight(string page) {
 	if (get_property("c2t_megg_disableRelayCleaner").to_boolean())
 		return page;
 
-	buffer buf = page.to_buffer();
+	buffer buf = page;
 	matcher m;
 
-	//remove articles from the start of monster names
-	m = create_matcher("(<option[^>]+>)([Aa]n?|[Tt]he|[Ss]ome)\\s+",buf);
-	buf = replace_all(m,"$1").to_buffer();
+	//use mafia's monster names for disambiguation
+	m = create_matcher('(<option value="(\\d+)">).+?(?=</option>)',buf);
+	while (m.find())
+		buf.replace_string(m.group(0),`{m.group(1)}{m.group(2).to_monster().name}`);
 
 	//make select searchable
 	buf.replace_string("</head>",'<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script><link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /><script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script><script type="text/javascript">var jQuery_3_7_1 = $.noConflict(true);jQuery_3_7_1(document).ready(function() {jQuery_3_7_1(\'.searchable-select\').select2();});</script></head>');
 	buf.replace_string('<select name="mid">','<select class="searchable-select" name="mid">');
 
-	return buf.to_string();
+	return buf;
 }
 
 boolean c2t_megg_error(string s) {
